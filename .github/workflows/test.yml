@@ -11,7 +11,7 @@ on:
 jobs:
   scan:
     name: gitleaks
-    runs-on: saritasa-rocks-eks
+    runs-on: ubuntu-latest
     steps: 
       - name: Run a step
         id: step1
