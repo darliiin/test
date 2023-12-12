@@ -20,9 +20,11 @@ jobs:
           exit 1
       
       - name: Download artifact
+        if: always()
         uses: actions/download-artifact@v2
         with:
           name: step1-output
       
       - name: Display content of output.txt
+        if: always()
         run: cat step1-output/output.txt
