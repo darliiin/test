@@ -32,6 +32,7 @@ jobs:
           echo "$job_html_url"
           summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
           echo "$summary_raw"
+          echo "$job_html_url" > ${{ runner.workspace }}/job_html_url.txt
 
   process-results:
     name: Process Results
@@ -40,10 +41,8 @@ jobs:
     steps:
       - name: Get job_html_url
         run: |
-          html_url="${{ needs.gitleaks.outputs.job_html_url }}"
-          echo "$html_url"
-          summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$html_url/summary_raw")
-          echo "$summary_raw"
+           job_html_url=$(cat ${{ needs.gitleaks.outputs.job_html_url_file }})
+           echo "Job HTML URL: $job_html_url"
 
   
   
