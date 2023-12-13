@@ -33,6 +33,6 @@ jobs:
           
       - name: Get Summary
         run: |
-          job_html_url="${{ steps.get-details.outputs.job_html_url }}"
-          summary_raw=$(curl -s "$job_html_url/summary_raw")
-          echo "Summary Raw: $summary_raw"
+          echo "$job_html_url"
+          summary_raw=$(curl -s -H Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
+          echo "$summary_raw"
