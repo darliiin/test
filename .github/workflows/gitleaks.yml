@@ -34,5 +34,5 @@ jobs:
       - name: Get Summary
         run: |
           echo "$job_html_url"
-          summary_raw=$(curl -s -H Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
+          summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
           echo "$summary_raw"
