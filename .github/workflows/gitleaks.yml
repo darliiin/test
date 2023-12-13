@@ -8,6 +8,8 @@ jobs:
   gitleaks:
     name: gitleaks
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{steps.git-details.outputs.job_html}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -26,12 +28,18 @@ jobs:
           export workflow_run_id="${{ github.run_id }}"
           run_details=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$repo/actions/runs/$workflow_run_id/jobs")
           job_html_url=$(echo "$run_details" | jq -r '.jobs[0].html_url')
-          echo "::set-output name=job_html_url::$job_html_url"
-          
-          # Генерация события repository_dispatch
-          echo "::set-output name=event_payload::$(echo "{\"job_html_url\": \"$job_html_url\"}" | base64)"
-          echo "Generated event payload: $(echo "{\"job_html_url\": \"$job_html_url\"}" | base64)"
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -H "Content-Type: application/json" \
-               -d "{\"event_type\": \"my-event\", \"client_payload\": {\"job_html_url\": \"$job_html_url\"}}" \
-               "https://api.github.com/repos/$repo/dispatches"
+          echo "::set-output name=job_html::$job_html_url"
+
+
+  process-results:
+    name: Process Results
+    needs: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get job_html_url
+        run: |
+           echo ${{needs.gitleaks.outputs.job_html}}
+           job_html_url=${{ needs.gitleaks.outputs.job_html_url }}
+           echo "Job HTML URL: $job_html_url"
+
+  
