@@ -23,12 +23,13 @@ jobs:
         id: get-details
         run: |
           export repo="${{ github.repository }}"
-          echo "Repository: $repo"
+          echo "$repo"
           export workflow_run_id="${{ github.run_id }}"
-          echo "Workflow Run ID: $workflow_run_id"
-          run_details=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "https://api.github.com/repos/${repo}/actions/runs/$workflow_run_id")
+          echo "$workflow_run_id"
+          run_details=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "https://api.github.com/repos/$repo/actions/runs/$workflow_run_id/jobs")
+          echo "$run_details"
           job_html_url=$(echo "$run_details" | jq -r '.html_url')
-          echo "::set-output name=job_html_url::$job_html_url"
+          echo "$job_html_url"
           
       - name: Get Summary
         run: |
