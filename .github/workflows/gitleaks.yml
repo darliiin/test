@@ -36,8 +36,10 @@ jobs:
           token="${{ secrets.GITHUB_TOKEN }}"
           # Получение списка артефактов
           artifacts=$(curl -s -H "Authorization: token $token" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
+          echo "$artifacts"
           # Извлечение URL архива с результатами
           archive_url=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name == "gitleaks-results.sarif") | .archive_download_url')
+          echo "$archive_url"
           # Загрузка и разархивация
           if [ -n "$archive_url" ]; then
               echo "Загрузка архива..."
