@@ -1,0 +1,28 @@
+title = "Gitleaks"
+
+[extend]
+# if true, expands the gitleaks configuration with additional values
+# https://github.com/zricethezav/gitleaks/blob/master/config/gitleaks.toml
+useDefault = false
+
+# information that define instructions on how to detect secrets
+# configuration format description: https://github.com/gitleaks/gitleaks#configuration
+[[rules]]
+id = "secrets"
+description = "all secrets files"
+# Golang regular expression used to detect secrets. 
+regex = '''.*'''
+# Golang regular expression used to match paths.
+path = '''(.*?)(\.secret$|-secret\.yaml$|-secrets\.yaml$|-secret\.yml$|-secrets\.yml$)'''
+
+[[rules]]
+id = "*.pem"
+description = "all .pem files"
+regex = '''.*'''
+path = '''(.*?)(\.pem$)'''
+
+[[rules]]
+id = "*.key"
+description = "all .key files"
+regex = '''.*'''
+path = '''(.*?)(\.key$)'''
