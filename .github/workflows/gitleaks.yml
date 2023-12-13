@@ -18,7 +18,15 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        
+          
+      - name: Get Workflow Run ID and Repository
+        run: |
+          export repo="${{ github.repository }}"
+          echo "$repo"
+          export workflow_run_id="${{ github.run_id }}"
+          echo "$workflow_run_id"
+          export workflow_job_id="${{ github.job_id }}"
+          echo "$workflow_job_id"
 
   process-results:
     name: Process Results
