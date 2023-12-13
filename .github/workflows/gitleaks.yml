@@ -19,11 +19,13 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Get Workflow Run ID and Repository
+        if: always()
         run: |
           export repo="${{ github.repository }}"
           export workflow_run_id="${{ github.run_id }}"
           
       - name: Execute Commands
+        if: always()
         run: |
           token="${{ secrets.GITHUB_TOKEN }}"
 
