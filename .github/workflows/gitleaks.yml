@@ -8,8 +8,7 @@ jobs:
   scan:
     name: gitleaks
     runs-on: ubuntu-latest
-    steps:
-        
+    steps: 
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -18,3 +17,39 @@ jobs:
         id: gitleaks
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Get Workflow Run ID and Repository
+        run: |
+          export repo="${{ github.repository }}"
+          export workflow_run_id="${{ github.run_id }}"
+          
+      - name: Execute Commands
+        run: |
+          token="${{ secrets.13.12 }}"
+
+          # Получение списка артефактов
+          artifacts=$(curl -s -H "Authorization: token $token" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
+
+          # Извлечение URL архива с результатами
+          archive_url=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name == "gitleaks-results.sarif") | .archive_download_url')
+
+          # Загрузка и разархивация
+          if [ -n "$archive_url" ]; then
+              echo "Загрузка архива..."
+              curl -sLJO -H "Authorization: token $token" "$archive_url"
+
+              echo "Разархивация..."
+              unzip -o gitleaks-results.sarif.zip
+
+              # Поиск файла results.sarif
+              result_file=$(find . -name "results.sarif" -type f)
+
+              if [ -n "$result_file" ]; then
+                  echo "Файл results.sarif найден: $result_file"
+              else
+                  echo "Файл results.sarif не найден."
+              fi
+
+          else
+              echo "Архив с результатами не найден."
+          fi
