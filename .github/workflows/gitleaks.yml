@@ -9,7 +9,8 @@ jobs:
     name: gitleaks
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{steps.git-details.outputs.job_html}}
+      output1: ${{steps.get-details.outputs.job_html}}
+      output2: ${{steps.get-details.outputs.hello}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,6 +32,7 @@ jobs:
           job_html_url=$(echo "$run_details" | jq -r '.jobs[0].html_url')
           echo "$job_html_url"
           echo "::set-output name=job_html::$job_html_url"
+          echo "::set-output name=hello::hello_world"
 
 
   process-results:
@@ -43,5 +45,7 @@ jobs:
            echo ${{needs.gitleaks.outputs.output1}}
            job_html_url=${{ needs.gitleaks.outputs.output1 }}
            echo "Job HTML URL: $job_html_url"
+           echo ${{needs.gitleaks.outputs.output2}}
+
 
   
