@@ -31,7 +31,7 @@ jobs:
           echo "$repo"
           export workflow_run_id="${{ github.run_id }}"
           echo "$workflow_run_id"
-          export workflow_job_id="${{ workflow_job_id }}"
+          export workflow_job_id="${{ github.job_id }}"
           echo "$workflow_job_id"
           
           
