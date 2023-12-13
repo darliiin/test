@@ -20,33 +20,18 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           
       - name: Get Workflow Run ID and Repository
+        id: get-details
         run: |
           export repo="${{ github.repository }}"
-          echo "$repo"
+          echo "Repository: $repo"
           export workflow_run_id="${{ github.run_id }}"
-          echo "$workflow_run_id"
-          export workflow_job_id="${{ github.job_id }}"
-          echo "$workflow_job_id"
-
-  process-results:
-    name: Process Results
-    needs: gitleaks
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Workflow Run ID and Repository
+          echo "Workflow Run ID: $workflow_run_id"
+          run_details=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "https://api.github.com/repos/${repo}/actions/runs/$workflow_run_id")
+          job_html_url=$(echo "$run_details" | jq -r '.html_url')
+          echo "::set-output name=job_html_url::$job_html_url"
+          
+      - name: Get Summary
         run: |
-          export repo="${{ github.repository }}"
-          echo "$repo"
-          export workflow_run_id="${{ github.run_id }}"
-          echo "$workflow_run_id"
-          export workflow_job_id="${{ github.job_id }}"
-          echo "$workflow_job_id"
-          
-          
-      - name: Execute Commands
-        run: |
-          token="${{ secrets.GIT }}"
-          # Получение списка артефактов
-          sum=$(curl -s -H "Authorization: token $token" "https://github.com/$repo/actions/runs/$workflow_run_id/jobs/$workflow_job_id/summary_raw")
-          echo "$sum"
-          
+          job_html_url="${{ steps.get-details.outputs.job_html_url }}"
+          summary_raw=$(curl -s "$job_html_url/summary_raw")
+          echo "Summary Raw: $summary_raw"
