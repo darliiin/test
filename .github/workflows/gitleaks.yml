@@ -35,11 +35,6 @@ jobs:
           echo "::set-output name=job_html::$job_html_url"  
 
 
-      - id: exp
-        uses: pl-strflt/job-summary-url-action@v1
-      - run: echo '${{ steps.exp.outputs.job_summary_url }}'
-        shell: bash
-
   process-results:
     name: Process Results
     needs: gitleaks
@@ -47,7 +42,6 @@ jobs:
     steps:
       - name: Get job_html_url
         run: |
-           echo ${{needs.gitleaks.outputs.output1}}
            job_html_url=${{ needs.gitleaks.outputs.output1 }}
            echo "Job HTML URL: $job_html_url"
            summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
