@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       output1: ${{steps.get-details.outputs.job_html}}
-      output2: ${{steps.get-details.outputs.hello}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,9 +30,9 @@ jobs:
           echo "$run_details"
           job_html_url=$(echo "$run_details" | jq -r '.jobs[0].html_url')
           echo "$job_html_url"
-          echo "::set-output name=job_html::$job_html_url"
-          echo "::set-output name=hello::hello_world"
-
+          summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
+          echo "$summary_raw"
+          echo "::set-output name=job_html::$job_html_url"  
 
   process-results:
     name: Process Results
@@ -45,7 +44,5 @@ jobs:
            echo ${{needs.gitleaks.outputs.output1}}
            job_html_url=${{ needs.gitleaks.outputs.output1 }}
            echo "Job HTML URL: $job_html_url"
-           echo ${{needs.gitleaks.outputs.output2}}
-
-
-  
+           summary_raw=$(curl -s -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" "$job_html_url/summary_raw")
+           echo "$summary_raw"
