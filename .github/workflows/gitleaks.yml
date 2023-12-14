@@ -26,10 +26,7 @@ jobs:
         run: |
            job_html_url="${{ steps.exp.outputs.job_summary_url }}"
            echo "Job HTML URL: $job_html_url"
-        
-           pip install beautifulsoup4
-        
-            # Извлечение имен файлов с использованием Python и BeautifulSoup
-           files=$(curl -s "$job_html_url" | python -c "from bs4 import BeautifulSoup; import sys; soup = BeautifulSoup(sys.stdin, 'html.parser'); print('\n'.join([a.text for a in soup.select('table tr td a[href$=key]')]))")
-        
-           echo "Files: $files"
+           summary_content=$(curl -s "$job_html_url")
+
+           echo "Summary Content:"
+           echo "$summary_content"
